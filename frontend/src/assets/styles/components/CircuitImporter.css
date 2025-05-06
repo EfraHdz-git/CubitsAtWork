@@ -1,0 +1,200 @@
+/* src/assets/styles/components/CircuitImporter.css */
+.circuit-importer-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.circuit-importer-description {
+  margin-bottom: var(--spacing-3);
+  color: var(--text-light-color);
+}
+
+.circuit-importer-upload-area {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--spacing-4);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  min-height: 150px;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.circuit-importer-upload-area:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.circuit-importer-drop-text {
+  color: var(--text-light-color);
+  margin-bottom: var(--spacing-2);
+}
+
+.circuit-importer-file-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.circuit-importer-file-label {
+  color: var(--primary-color);
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: var(--spacing-1);
+  transition: color 0.2s;
+  text-decoration: underline;
+}
+
+.circuit-importer-file-label:hover {
+  color: var(--secondary-color);
+}
+
+.circuit-importer-file-info {
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+  width: 100%;
+  max-width: 300px;
+  position: relative;
+  text-align: center;
+}
+
+.circuit-importer-file-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+  position: relative;
+}
+
+.circuit-importer-image-preview {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-2);
+  object-fit: contain;
+  border: 1px solid var(--border-color);
+}
+
+.circuit-importer-filename {
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: var(--spacing-1);
+  word-break: break-all;
+}
+
+.circuit-importer-filesize {
+  color: var(--text-light-color);
+  font-size: 0.875rem;
+}
+
+.circuit-importer-error {
+  background-color: rgba(255, 59, 48, 0.1);
+  border-left: 3px solid #ff3b30;
+  color: #d32f2f;
+  margin-top: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+  padding: var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+}
+
+.circuit-importer-error p {
+  margin: 0;
+  margin-bottom: var(--spacing-2);
+}
+
+.circuit-importer-error p:last-child {
+  margin-bottom: 0;
+}
+
+.circuit-importer-error-help {
+  color: var(--text-light-color);
+  font-size: 0.9rem;
+}
+
+.circuit-importer-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-3);
+}
+
+.circuit-importer-reset-button {
+  background-color: var(--secondary-bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.circuit-importer-reset-button:hover {
+  background-color: var(--hover-bg-color);
+}
+
+.circuit-importer-loading {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+}
+
+.circuit-importer-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 2px solid white;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  animation: circuit-importer-spin 1s linear infinite;
+}
+
+.circuit-importer-button {
+  align-self: flex-end;
+}
+
+.circuit-importer-button:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+.circuit-importer-remove-file {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: none;
+  color: #666;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.circuit-importer-remove-file:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #333;
+}
+
+@keyframes circuit-importer-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

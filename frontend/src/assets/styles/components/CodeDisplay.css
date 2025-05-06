@@ -1,0 +1,171 @@
+/* src/assets/styles/components/CodeDisplay.css */
+.code-display-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.code-display-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.code-display-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.code-display-controls {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.code-display-select {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: 0.875rem;
+  min-width: 100px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: white;
+}
+
+.code-display-pre {
+  background-color: var(--code-bg-color);
+  color: var(--code-text-color);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius-sm);
+  overflow: auto;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+  min-height: 200px;
+}
+
+.code-display-code {
+  display: block;
+  white-space: pre;
+}
+
+.code-display-textarea {
+  background-color: var(--code-bg-color);
+  color: var(--code-text-color);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius-sm);
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  flex: 1;
+  resize: none;
+  border: 1px solid var(--border-color-dark, #aaa);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.code-display-textarea:focus {
+  border-color: var(--primary-color);
+}
+
+.code-display-placeholder {
+  color: var(--text-light-color);
+  text-align: center;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+button.secondary {
+  background-color: var(--border-color);
+  color: var(--text-color);
+  border: none;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+button.secondary:hover:not(:disabled) {
+  background-color: var(--border-color-dark, #d0d0d0);
+}
+
+button.secondary.active {
+  background-color: var(--success-color, #28a745);
+  color: white;
+}
+
+button.primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+button.primary:hover:not(:disabled) {
+  background-color: var(--primary-color-dark, #0056b3);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Jupyter notebook styling */
+.jupyter-note-container {
+  background-color: var(--code-bg-color);
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius-sm);
+  flex: 1;
+  min-height: 200px;
+  overflow: auto;
+}
+
+.jupyter-info {
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-4);
+  margin: var(--spacing-2) 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.jupyter-info h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.jupyter-info p {
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.jupyter-info ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.jupyter-info li {
+  margin: 5px 0;
+}
+
+.jupyter-note {
+  background-color: #eff8ff;
+  padding: 10px;
+  border-left: 4px solid var(--primary-color);
+  margin-top: 15px;
+}

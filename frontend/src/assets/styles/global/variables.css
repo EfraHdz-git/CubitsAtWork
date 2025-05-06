@@ -1,0 +1,32 @@
+/* src/assets/styles/global/variables.css */
+:root {
+    --primary-color: #3182CE;
+    --secondary-color: #2C5282;
+    --accent-color: #4299E1;
+    --background-color: #F7FAFC;
+    --card-bg-color: #FFFFFF;
+    --text-color: #1A202C;
+    --text-light-color: #718096;
+    --border-color: #E2E8F0;
+    --success-color: #48BB78;
+    --error-color: #F56565;
+    --code-bg-color: #2D3748;
+    --code-text-color: #F7FAFC;
+  
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+  
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-10: 40px;
+  
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.07);
+  }

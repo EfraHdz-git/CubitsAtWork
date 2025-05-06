@@ -1,0 +1,121 @@
+/* src/index.css */
+@import './assets/styles/global/variables.css';
+@import './assets/styles/global/reset.css';
+@import './assets/styles/global/typography.css';
+
+:root {
+  --primary-color: #3182CE;
+  --secondary-color: #2C5282;
+  --accent-color: #4299E1;
+  --background-color: #F7FAFC;
+  --card-bg-color: #FFFFFF;
+  --text-color: #1A202C;
+  --text-light-color: #718096;
+  --border-color: #E2E8F0;
+  --success-color: #48BB78;
+  --error-color: #F56565;
+  --code-bg-color: #2D3748;
+  --code-text-color: #F7FAFC;
+
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.07);
+
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
+
+.resize-vertical {
+  resize: vertical;
+}
+
+.code-block {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.card {
+  background-color: var(--card-bg-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-sm);
+  height: 100%;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+button.primary {
+  background-color: var(--primary-color);
+  color: white;
+  padding: var(--spacing-2) var(--spacing-4);
+}
+
+button.primary:hover {
+  background-color: var(--secondary-color);
+}
+
+button.primary:disabled {
+  background-color: var(--text-light-color);
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: var(--spacing-2) var(--spacing-4);
+}
+
+button.secondary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+select, input, textarea {
+  width: 100%;
+  padding: var(--spacing-2);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-family: inherit;
+  color: var(--text-color);
+}
+
+select:focus, input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}

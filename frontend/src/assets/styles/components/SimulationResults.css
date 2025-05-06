@@ -1,0 +1,295 @@
+/* src/assets/styles/components/SimulationResults.css */
+.sim-results-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sim-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.sim-results-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sim-results-controls {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.sim-results-select {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: 0.875rem;
+  min-width: 100px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: white;
+}
+
+.sim-button {
+  min-width: 130px;
+}
+
+.sim-results-content {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  min-height: 300px;
+  background-color: var(--bg-light, #f7f7f7);
+}
+
+.sim-results-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-light-color);
+  gap: var(--spacing-3);
+}
+
+.sim-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Histogram styling */
+.histogram-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-2) 0;
+}
+
+.histogram-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+  padding: 0 var(--spacing-2);
+}
+
+.histogram-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  color: var(--text-medium-color, #666);
+}
+
+.histogram-showing-info {
+  font-size: 0.8rem;
+  margin-top: var(--spacing-1);
+  color: var(--text-light-color);
+}
+
+.histogram-sort-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: 0.875rem;
+}
+
+.histogram-sort-select {
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: 0.8rem;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: white;
+}
+
+.histogram-grid {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: var(--spacing-2); /* Increased from var(--spacing-1) */
+  height: 100%;
+  min-height: 200px;
+  padding-bottom: var(--spacing-6); /* Increased bottom padding */
+  overflow-x: auto;
+}
+
+.histogram-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 70px; /* Increased from 60px */
+  max-width: 90px; /* Increased from 80px */
+}
+
+.histogram-bar-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 200px;
+  position: relative;
+}
+
+.histogram-bar-value {
+  background-color: var(--primary-color, #4285F4);
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+}
+
+.histogram-more-bar {
+  background-color: var(--text-light-color, #999);
+}
+
+.histogram-bar-count {
+  color: white;
+  font-weight: bold;
+  padding: var(--spacing-1);
+  position: absolute;
+  top: 0;
+  font-size: 0.75rem;
+  transform: translateY(-100%);
+}
+
+.histogram-state-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-2);
+}
+
+.histogram-state {
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-weight: bold;
+  padding: var(--spacing-1);
+  background-color: var(--bg-dark, #e0e0e0);
+  border-radius: 4px;
+  width: 95%; /* Increased from 90% */
+  text-align: center;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.2s ease;
+}
+
+.histogram-state:hover {
+  overflow: visible;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.histogram-more-label {
+  background-color: #e5e5e5;
+  color: var(--text-medium-color, #666);
+}
+
+.histogram-percentage {
+  font-size: 0.75rem;
+  color: var(--text-medium-color, #666);
+  margin-top: var(--spacing-1);
+}
+
+/* Probability display */
+.state-vector-container,
+.probability-container {
+  padding: var(--spacing-2);
+}
+
+.state-data {
+  background-color: white;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  overflow: auto;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.875rem;
+  margin: 0;
+  border: 1px solid var(--border-color);
+}
+
+/* Probabilities table */
+.probabilities-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.probabilities-table th,
+.probabilities-table td {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.probabilities-table th {
+  font-weight: 600;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.sim-results-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: var(--error-color);
+}
+
+.sim-results-error button {
+  margin-top: 1rem;
+}
+
+/* Responsive styles */
+@media (min-width: 768px) {
+  .histogram-grid {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .sim-results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+  
+  .sim-results-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .histogram-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2);
+  }
+  
+  .histogram-column {
+    min-width: 60px;
+  }
+}

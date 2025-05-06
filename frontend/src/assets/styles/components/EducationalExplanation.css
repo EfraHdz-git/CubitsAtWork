@@ -1,0 +1,151 @@
+/* src/assets/styles/components/EducationalExplanation.css */
+.edu-exp-container {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-4);
+}
+
+.edu-exp-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-3);
+  color: var(--text-color);
+}
+
+.edu-exp-placeholder {
+  color: var(--text-light-color);
+  text-align: center;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edu-exp-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.edu-exp-summary {
+  margin-bottom: var(--spacing-2);
+}
+
+.edu-exp-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing-3);
+  margin-top: var(--spacing-2);
+}
+
+.edu-exp-subheading {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-3);
+  color: var(--primary-color);
+}
+
+.edu-exp-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* How it works section */
+.edu-exp-gates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.edu-exp-gate {
+  margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.edu-exp-gate:last-child {
+  border-bottom: none;
+}
+
+.edu-exp-gate-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-1);
+  color: var(--text-color);
+}
+
+.edu-exp-gate-explanation {
+  margin: var(--spacing-1) 0;
+  line-height: 1.6;
+}
+
+.edu-exp-gate-analogy {
+  margin-top: var(--spacing-2);
+  font-style: italic;
+  color: var(--text-medium-color);
+}
+
+/* Compact gates display */
+.edu-exp-gates-compact {
+  margin-top: var(--spacing-3);
+  padding-top: var(--spacing-3);
+  border-top: 1px dashed var(--border-color);
+}
+
+.edu-exp-gates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+}
+
+.edu-exp-gate-grid-item {
+  padding: var(--spacing-2);
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Applications section */
+.edu-exp-applications {
+  list-style-type: disc;
+  padding-left: var(--spacing-4);
+  margin: var(--spacing-2) 0;
+}
+
+.edu-exp-application {
+  margin-bottom: var(--spacing-2);
+  line-height: 1.4;
+}
+
+.edu-exp-applications-paragraph {
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-color);
+}
+
+/* Error display */
+.edu-exp-error {
+  padding: var(--spacing-4);
+  border-radius: var(--border-radius);
+  background-color: rgba(255, 0, 0, 0.05);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  margin: var(--spacing-3) 0;
+}
+
+.edu-exp-error-message {
+  font-family: monospace;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: var(--spacing-3);
+  border-radius: var(--border-radius-sm);
+  margin: var(--spacing-3) 0;
+  word-break: break-word;
+}
+
+.edu-exp-error-help {
+  font-style: italic;
+  color: var(--text-medium-color);
+}

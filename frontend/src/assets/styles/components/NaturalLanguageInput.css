@@ -1,0 +1,80 @@
+/* src/assets/styles/components/NaturalLanguageInput.css */
+.nl-input-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.nl-input-description {
+  margin-bottom: var(--spacing-3);
+  color: var(--text-light-color);
+}
+
+.nl-input-textarea {
+  min-height: 120px;
+  margin-bottom: var(--spacing-3);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-2);
+  font-family: inherit;
+  resize: vertical;
+  width: 100%;
+}
+
+.nl-input-textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}
+
+.nl-input-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-3);
+}
+
+.nl-input-button {
+  align-self: flex-end;
+}
+
+.nl-input-reset-button {
+  align-self: flex-end;
+  background-color: var(--secondary-bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.nl-input-reset-button:hover {
+  background-color: var(--hover-bg-color);
+}
+
+.nl-input-loading {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+}
+
+.nl-input-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 2px solid white;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  animation: nl-spin 1s linear infinite;
+}
+
+.nl-input-error {
+  color: var(--error-color);
+  margin-top: var(--spacing-2);
+}
+
+@keyframes nl-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

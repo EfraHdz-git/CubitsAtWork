@@ -1,0 +1,88 @@
+/* src/App.css */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+.app-content-section {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: calc(100% - 350px);
+  margin-left: 350px; /* Same as sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.app-sidebar {
+  width: 350px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background-color: #fdfdfd;
+  border-right: 1px solid #ddd;
+  z-index: 100;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+.app-main {
+  flex-grow: 1;
+  padding: var(--spacing-6);
+  background-color: var(--background-color);
+  min-width: 0;
+}
+
+/* Sidebar toggle button */
+.sidebar-toggle {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 75px; /* Position below header */
+  left: 15px;
+  z-index: 1001; /* Above sidebar */
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .app-content-section {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .app-sidebar {
+    width: 100%; /* Full width on mobile */
+    transform: translateX(-100%);
+  }
+  
+  .app-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .sidebar-toggle {
+    display: flex;
+  }
+  
+  .app-main {
+    padding: var(--spacing-4) var(--spacing-3);
+    margin-top: 40px; /* Space for the toggle button */
+  }
+}

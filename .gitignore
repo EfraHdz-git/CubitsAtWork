@@ -1,0 +1,60 @@
+# ----------------
+# Python backend
+# ----------------
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+.env
+.env.*
+
+# VSCode and IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+*.pycache
+
+# Test cache
+.pytest_cache/
+
+# MacOS
+.DS_Store
+
+# ----------------
+# Node.js / React frontend
+# ----------------
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+# Vite
+*.local
+.env.local
+.env.*.local
+
+# Dependency directories
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production build
+*.zip
+
+# ----------------
+# Others
+# ----------------
+*.bak
+*.tmp
+*.swp

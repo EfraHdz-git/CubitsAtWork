@@ -1,0 +1,14 @@
+# requirements.txt
+fastapi
+uvicorn
+pydantic
+qiskit
+matplotlib
+transformers
+torch
+numpy
+pytest
+python-multipart
+python-dotenv
+openai
+nbformat

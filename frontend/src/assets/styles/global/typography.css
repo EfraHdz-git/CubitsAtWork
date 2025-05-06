@@ -1,0 +1,39 @@
+/* src/assets/styles/global/typography.css */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 0.5em;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  h4 {
+    font-size: 1.125rem;
+  }
+  
+  p {
+    margin-bottom: 1em;
+  }
+  
+  code {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9em;
+    padding: 0.2em 0.4em;
+    background-color: var(--border-color);
+    border-radius: var(--border-radius-sm);
+  }
+  
+  pre code {
+    background-color: transparent;
+    padding: 0;
+  }
