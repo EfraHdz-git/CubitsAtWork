@@ -1,23 +1,18 @@
-# Use official Python image
-FROM python:3.11-slim-bookworm
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+FROM python:3.10
 
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Copy all project files
+# Copy the application code
 COPY . .
 
-# Expose port FastAPI will run on
-EXPOSE 8000
+# Expose port (8080 is preferred for IBM Cloud Code Engine)
+EXPOSE 8080
 
-# Start FastAPI server
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Command to run the application
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
