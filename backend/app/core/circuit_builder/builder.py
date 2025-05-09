@@ -361,6 +361,7 @@ class CustomCircuitBuilder:
             except Exception as e:
                 print(f"Error in conditional gate: {str(e)}")
 
+
 class CircuitBuilder:
 
     def __init__(self, api_key=None):

@@ -1,7 +1,7 @@
 // src/services/api.ts
 
-//const API_BASE_URL = 'http://localhost:8000';
-const API_BASE_URL = 'https://cubits-api.1v4c6sozyelm.us-south.codeengine.appdomain.cloud';
+export const API_BASE_URL = 'http://127.0.0.1:8000';
+//export const API_BASE_URL = 'https://cubits-api.1v4c6sozyelm.us-south.codeengine.appdomain.cloud';
 
 export interface CircuitGenerationRequest {
   text: string;
@@ -74,6 +74,27 @@ export interface CircuitResponse {
   error?: string; // Add this for top-level errors
 }
 
+export interface CircuitTemplate {
+  id: string;
+  name: string;
+  description: string;
+  parameters: CircuitParameter[];
+  defaultParams: {[key: string]: any};
+}
+
+export interface CircuitParameter {
+  name: string;
+  label: string;
+  type: string;
+  default: any;
+  min?: number;
+  max?: number;
+  options?: Array<{
+    value: string;
+    label: string;
+  }>;
+}
+
 // Helper functions for working with enhanced visualizations
 export function isEnhancedImage(
   image: string | CircuitImage | null | undefined
@@ -109,6 +130,7 @@ export function getImageMetadata(
 }
 
 export const ApiService = {
+  // Text-to-circuit generation
   generateCircuitFromText: async (text: string): Promise<CircuitResponse> => {
     try {
       const response = await fetch(`${API_BASE_URL}/text/generate`, {
@@ -132,7 +154,7 @@ export const ApiService = {
     }
   },
   
-  // Add new method for circuit file uploads
+  // Circuit file upload
   uploadCircuitFile: async (file: File, description?: string): Promise<CircuitUploadResponse> => {
     try {
       const formData = new FormData();
@@ -159,5 +181,79 @@ export const ApiService = {
       console.error('Error uploading circuit file:', error);
       throw error;
     }
+  },
+  
+  // Circuit image upload
+  uploadCircuitImage: async (file: File): Promise<CircuitResponse> => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch(`${API_BASE_URL}/image/generate`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `API error: ${response.status}`);
+      }
+      
+      // Parse the response and return the data
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error uploading circuit image:', error);
+      throw error;
+    }
+  },
+  
+  // Fetch circuit templates
+  fetchCircuitTemplates: async (): Promise<CircuitTemplate[]> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/circuits/templates`);
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching circuit templates:', error);
+      throw error;
+    }
+  },
+  
+  // Generate circuit from template
+  generateCircuit: async (circuitType: string, parameters: any): Promise<CircuitResponse> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/circuits/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          circuit_type: circuitType,
+          parameters: parameters
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error generating circuit:', error);
+      throw error;
+    }
+  },
+  
+  // Get Jupyter notebook URL
+  getJupyterNotebookUrl: (circuitType: string, numQubits: number): string => {
+    return `${API_BASE_URL}/exports/jupyter?circuit_type=${encodeURIComponent(circuitType)}&num_qubits=${numQubits}`;
   }
 };

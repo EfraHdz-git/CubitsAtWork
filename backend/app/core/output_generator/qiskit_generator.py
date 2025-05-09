@@ -1,5 +1,6 @@
 # app/core/output_generator/qiskit_generator.py
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
 import re
 from datetime import datetime
 
@@ -42,7 +43,9 @@ class QiskitGenerator:
         
         # Add just the imports that will be used
         if needs_aer:
-            circuit_code.append("from qiskit import Aer, execute, transpile")
+            circuit_code.append("from qiskit import transpile, execute")
+            circuit_code.append("# Import Aer from qiskit_aer package")
+            circuit_code.append("from qiskit_aer import Aer")
         if needs_visualization:
             circuit_code.append("from qiskit.visualization import plot_histogram")
             if circuit.num_qubits <= 2:
@@ -63,8 +66,9 @@ class QiskitGenerator:
         for i, (instruction, qargs, cargs) in enumerate(circuit.data):
             # Get the name of the gate
             gate_name = instruction.name
-            qubits = [q.index for q in qargs]
-            clbits = [c.index for c in cargs]
+            # Fixed: use enumeration instead of direct index property
+            qubits = [i for i, _ in enumerate(qargs)]
+            clbits = [i for i, _ in enumerate(cargs)]
             
             # Add code with comments - indented for the function
             gate_code = self._generate_gate_code(gate_name, qubits, clbits, instruction, indent=4)

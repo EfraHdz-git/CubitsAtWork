@@ -1,14 +1,13 @@
-# requirements.txt
 fastapi
-uvicorn
 pydantic
 qiskit
+qiskit-aer
+pylatexenc
 matplotlib
-transformers
-torch
 numpy
-pytest
 python-multipart
 python-dotenv
 openai
 nbformat
+uvicorn[standard]
+gunicorn

@@ -36,11 +36,12 @@ class CircuitExplainer:
         
         try:
             # Prepare circuit information for the prompt
+            # Changed to avoid using qubit.index
             circuit_details = {
                 "type": intent.circuit_type.value,
                 "num_qubits": circuit.num_qubits,
                 "operations": [
-                    {"name": instruction.name, "qubits": [q.index for q in qargs]}
+                    {"name": instruction.name, "qubits": [i for i, _ in enumerate(qargs)]}
                     for instruction, qargs, _ in circuit.data
                 ]
             }

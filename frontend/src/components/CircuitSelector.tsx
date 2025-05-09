@@ -1,30 +1,7 @@
 // src/components/CircuitSelector.tsx
 import { useState, useEffect } from 'react';
+import { ApiService, CircuitTemplate } from '../services/api';
 import '../assets/styles/components/CircuitSelector.css';
-
-// Set API base URL
-const API_BASE_URL = 'http://localhost:8000';
-
-interface CircuitParameter {
-  name: string;
-  label: string;
-  type: string;
-  default: any;
-  min?: number;
-  max?: number;
-  options?: Array<{
-    value: string;
-    label: string;
-  }>;
-}
-
-interface CircuitType {
-  id: string;
-  name: string;
-  description: string;
-  parameters: CircuitParameter[];
-  defaultParams: {[key: string]: any};
-}
 
 interface Props {
   onCircuitSelected: (data: any) => void;
@@ -44,7 +21,7 @@ function CircuitSelector({
   selectedCircuit 
 }: Props) {
   // Use mock data for initial render to avoid loading state
-  const [circuitTypes, setCircuitTypes] = useState<CircuitType[]>([
+  const [circuitTypes, setCircuitTypes] = useState<CircuitTemplate[]>([
     {
       id: 'bell_state',
       name: 'Bell State',
@@ -80,19 +57,9 @@ function CircuitSelector({
     try {
       setLoadingTemplates(true);
       
-      const response = await fetch(`${API_BASE_URL}/circuits/templates`);
+      const data = await ApiService.fetchCircuitTemplates();
       
-      if (!response.ok) {
-        throw new Error(`Failed to fetch circuit types: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (!Array.isArray(data)) {
-        throw new Error("Invalid response format: expected an array");
-      }
-      
-      if (data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         setCircuitTypes(data);
         
         // Only set default selection if we didn't have a selection yet
@@ -162,7 +129,7 @@ function CircuitSelector({
     
     return (
       <div className="circuit-selector-params">
-        {circuitType.parameters.map((param: CircuitParameter) => (
+        {circuitType.parameters.map((param) => (
           <div key={param.name} className="form-group">
             <label className="form-label">{param.label}</label>
             {param.type === 'number' ? (
@@ -218,44 +185,8 @@ function CircuitSelector({
     setLastGeneratedConfig(configString);
     
     try {
-      // Call the backend API to generate the circuit
-      const url = `${API_BASE_URL}/circuits/generate`;
-      
-      const requestBody = {
-        circuit_type: selectedType,
-        parameters: parameters
-      };
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-      
-      if (!response.ok) {
-        let errorMessage = `Failed to generate circuit: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.detail) {
-            errorMessage = errorData.detail;
-          }
-        } catch (e) {
-          // If we can't parse the error JSON, just use the status code
-        }
-        throw new Error(errorMessage);
-      }
-      
-      // Process the response
-      const text = await response.text();
-      
-      let circuitData;
-      try {
-        circuitData = JSON.parse(text);
-      } catch (parseError) {
-        throw new Error("Failed to parse circuit data");
-      }
+      // Use the ApiService to generate the circuit
+      const circuitData = await ApiService.generateCircuit(selectedType, parameters);
       
       // Update the parent component with the data
       onCircuitSelected(circuitData);

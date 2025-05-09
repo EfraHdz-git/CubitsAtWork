@@ -34,8 +34,8 @@ app = FastAPI(
     version=settings.APP_VERSION
 )
 
-# Configure CORS
-origins = settings.ALLOWED_ORIGINS if hasattr(settings, "ALLOWED_ORIGINS") else ["*"]
+# Configure CORS - overriding settings
+origins = ["https://cubitsatwork.efraprojects.com", "*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

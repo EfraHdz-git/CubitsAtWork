@@ -1,6 +1,6 @@
 // src/components/CodeDisplay.tsx
 import { useState, useEffect, useRef } from 'react';
-import { CircuitResponse } from '../services/api';
+import { CircuitResponse, ApiService } from '../services/api';
 import '../assets/styles/components/CodeDisplay.css';
 
 interface Props {
@@ -14,7 +14,6 @@ function CodeDisplay({ circuitData }: Props) {
   const [copied, setCopied] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const API_BASE_URL = 'http://localhost:8000';
 
   useEffect(() => {
     if (!circuitData || !circuitData.exports) return;
@@ -22,6 +21,7 @@ function CodeDisplay({ circuitData }: Props) {
     // Select the code based on the chosen format
     let selectedCode = '';
     switch (format) {
+      // src/components/CodeDisplay.tsx (continued)
       case 'qiskit':
         selectedCode = circuitData.exports.qiskit_code || '# No Qiskit code available';
         break;
@@ -57,7 +57,10 @@ function CodeDisplay({ circuitData }: Props) {
     // Special handling for Jupyter Notebook format
     if (format === 'jupyter') {
       const circuitId = circuitData?.circuit_type || 'custom';
-      const apiUrl = `${API_BASE_URL}/exports/jupyter?circuit_type=${encodeURIComponent(circuitData?.circuit_type || 'custom')}&num_qubits=${circuitData?.num_qubits || 2}`;
+      const apiUrl = ApiService.getJupyterNotebookUrl(
+        circuitData?.circuit_type || 'custom',
+        circuitData?.num_qubits || 2
+      );
       
       const a = document.createElement('a');
       a.href = apiUrl;

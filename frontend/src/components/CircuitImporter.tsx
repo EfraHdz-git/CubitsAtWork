@@ -1,5 +1,6 @@
 // src/components/CircuitImporter.tsx
 import { useState, useEffect, useRef } from 'react';
+import { ApiService } from '../services/api';
 import '../assets/styles/components/CircuitImporter.css';
 
 interface Props {
@@ -10,9 +11,6 @@ interface Props {
   onGenerationFailed?: (errorMessage: string) => void;
   isGenerating?: boolean;
 }
-
-// Set API base URL
-const API_BASE_URL = 'http://localhost:8000';
 
 function CircuitImporter({ 
   type, 
@@ -98,6 +96,7 @@ function CircuitImporter({
   };
 
   const handleReset = () => {
+    resetFileInput();
     onResetCircuit();
   };
 
@@ -111,47 +110,16 @@ function CircuitImporter({
     onStartGeneration();
     setError(null);
     
-    // Create a FormData object to send the file
-    const formData = new FormData();
-    formData.append('file', file);
-    
     try {
-      const endpoint = type === 'image' 
-        ? `${API_BASE_URL}/image/generate` 
-        : `${API_BASE_URL}/image/generate`;
+      let circuitData;
       
-      // Make the API call
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        // Try to get detailed error message from response
-        let errorMessage = `Failed to process the ${type}`;
-        try {
-          const errorData = await response.json();
-          if (errorData && errorData.detail) {
-            errorMessage = errorData.detail;
-          }
-        } catch (jsonError) {
-          // If JSON parsing fails, try to get text
-          try {
-            const errorText = await response.text();
-            if (errorText) {
-              errorMessage = errorText;
-            }
-          } catch (textError) {
-            // If both fail, use status code
-            errorMessage = `Server error: ${response.status}`;
-          }
-        }
-        
-        throw new Error(errorMessage);
+      if (type === 'image') {
+        // Use the ApiService to upload the circuit image
+        circuitData = await ApiService.uploadCircuitImage(file);
+      } else {
+        // Use the ApiService to upload the circuit file
+        circuitData = await ApiService.uploadCircuitFile(file);
       }
-      
-      // Parse the JSON response
-      const circuitData = await response.json();
       
       // Update the parent with the new circuit
       onCircuitGenerated(circuitData);

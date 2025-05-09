@@ -3,10 +3,12 @@ import numpy as np
 import io
 import base64
 import logging
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 from qiskit.visualization import plot_histogram, plot_bloch_multivector, plot_state_qsphere
 from typing import Optional, Dict, Any
 import matplotlib.patheffects as path_effects
+# Updated imports for Aer
+from qiskit_aer import AerSimulator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("CircuitVisualizer")
@@ -18,7 +20,7 @@ class CircuitVisualizer:
         """Initialize the circuit visualizer with modern styling."""
         # Modern theme styling
         self.circuit_style = {
-            'backgroundcolor': 'white',
+            # Removed backgroundcolor to support transparency
             'displaycolor': {
                 # Single-qubit gates - Row 1
                 'h': '#E53935',      # Hadamard - Red
@@ -61,7 +63,7 @@ class CircuitVisualizer:
                 'conditional': '#4CAF50', # Conditional - Orange
             },
             'linecolor': '#424242',        # Dark gray lines
-            'textcolor': '#212121',          # Changed to white for better contrast on colored backgrounds
+            'textcolor': '#212121',        # Changed to dark text color for better visibility with transparent background
             'showindex': True,
             'fontsize': 10,               # Reduced font size
         }
@@ -132,8 +134,8 @@ class CircuitVisualizer:
         # For other values, return formatted float with 2 decimal places
         return f"{angle_value:.2f}"
 
-    def _apply_figure_styling(self, fig: plt.Figure, ax: Optional[plt.Axes] = None):
-        """Apply consistent styling to the matplotlib figure."""
+    def _apply_figure_styling(self, fig: plt.Figure, transparent: bool = True, ax: Optional[plt.Axes] = None):
+        """Apply consistent styling to the matplotlib figure with transparency support."""
         if ax is None and len(fig.axes) > 0:
             ax = fig.axes[0]
         
@@ -143,16 +145,22 @@ class CircuitVisualizer:
                 spine.set_edgecolor(self.circuit_style.get('linecolor', '#424242'))
                 spine.set_linewidth(0.8)
             
-            # Set background color
-            ax.set_facecolor(self.circuit_style.get('backgroundcolor', 'white'))
+            # Set background color to transparent if requested
+            if transparent:
+                ax.set_facecolor('none')
+            else:
+                ax.set_facecolor('white')
             
             # Remove title and axis labels
             ax.set_title("")
             ax.set_xlabel("")
             ax.set_ylabel("")
         
-        # Set figure background
-        fig.patch.set_facecolor(self.circuit_style.get('backgroundcolor', 'white'))
+        # Set figure background to transparent if requested
+        if transparent:
+            fig.patch.set_facecolor('none')
+        else:
+            fig.patch.set_facecolor('white')
         
         # Apply tight layout with reduced padding
         fig.tight_layout(pad=0.1)
@@ -161,6 +169,10 @@ class CircuitVisualizer:
         """Process the circuit for enhanced visualization."""
         # Create a copy to work with to avoid modifying the original
         circuit_to_draw = circuit.copy()
+        
+        # Convert the immutable circuit to a mutable one
+        # This is key for fixing the issue with immutable HGate objects
+        circuit_to_draw = circuit_to_draw.copy_empty_like()
         
         # Define a nice representation for various gates
         gate_display_names = {
@@ -181,96 +193,21 @@ class CircuitVisualizer:
             'reset': 'R',
         }
         
-        # Process gate labels and visualization properties
-        for i, (instruction, qargs, cargs) in enumerate(circuit_to_draw.data):
+        # Instead of trying to modify the original circuit gates,
+        # rebuild the circuit with the instructions we want
+        for i, (instruction, qargs, cargs) in enumerate(circuit.data):
             gate_name = instruction.name.lower()
             logger.info(f"Processing gate {i}: {gate_name} with params: {getattr(instruction, 'params', [])}")
             
-            # Check if this is a conditional gate by looking at the label
-            if hasattr(instruction, 'label') and instruction.label and 'IF' in instruction.label:
-                logger.info(f"Found conditional gate with label: {instruction.label}")
-                continue  # The label is already set correctly
-
-            # Handle conditional gates by looking for modified gate names
-            elif "_if_" in gate_name:
-                try:
-                    # Extract the original gate name and condition value
-                    parts = gate_name.split("_if_")
-                    if len(parts) == 2:
-                        original_gate = parts[0]
-                        condition_value = parts[1]
-                        gate_label = gate_display_names.get(original_gate, original_gate.upper())
-                        label = f"{gate_label} IF({condition_value})"
-                        instruction.label = label
-                        logger.info(f"Processing conditional gate via name: {label}")
-                        # Also set a special color for this gate
-                        if hasattr(instruction, '_display'):
-                            instruction._display['fill'] = self.circuit_style['displaycolor'].get('conditional', '#E65100')
-                except Exception as e:
-                    logger.error(f"Error processing conditional gate name: {e}")
-
-            # Handle rotation gates (rx, ry, rz)
-            elif gate_name in ['rx', 'ry', 'rz', 'p', 'u1', 'cp'] and hasattr(instruction, 'params') and instruction.params:
-                try:
-                    angle_param = instruction.params[0]
-                    angle_str = self._format_angle(angle_param)
-                    
-                    # Create compact gate labels - simplify format for rotation gates
-                    if gate_name in ['rx', 'ry', 'rz']:
-                        # Shorter gate names
-                        if gate_name == 'rx':
-                            label = f"Rx({angle_str})"
-                        elif gate_name == 'ry':
-                            label = f"Ry({angle_str})"
-                        elif gate_name == 'rz':
-                            label = f"Rz({angle_str})"
-                    elif gate_name == 'p':
-                        label = f"P({angle_str})"
-                    elif gate_name == 'u1':
-                        label = f"U1({angle_str})"
-                    elif gate_name == 'cp':
-                        label = f"CP({angle_str})"
-                    
-                    logger.info(f"Setting rotation gate label: {label}")
-                    instruction.label = label
-                    
-                except Exception as e:
-                    logger.error(f"Error processing rotation gate {gate_name}: {e}")
-
-            # Handle two-qubit gates
-            elif gate_name in gate_display_names:
-                instruction.label = gate_display_names[gate_name]
-            
-            # Handle controlled rotation gates
-            elif gate_name in ['crx', 'cry', 'crz', 'cu1'] and hasattr(instruction, 'params') and instruction.params:
-                try:
-                    angle_param = instruction.params[0]
-                    angle_str = self._format_angle(angle_param)
-                    
-                    # Shorter gate names
-                    if gate_name == 'crx':
-                        label = f"CRx({angle_str})"
-                    elif gate_name == 'cry':
-                        label = f"CRy({angle_str})"
-                    elif gate_name == 'crz':
-                        label = f"CRz({angle_str})"
-                    elif gate_name == 'cu1':
-                        label = f"CU1({angle_str})"
-                        
-                    instruction.label = label
-                except Exception as e:
-                    logger.error(f"Error processing controlled rotation gate {gate_name}: {e}")
-            
-            # Handle conditional operations - using condition attribute if available
-            elif hasattr(instruction, 'condition') and instruction.condition is not None:
-                try:
-                    creg, val = instruction.condition
-                    gate_label = gate_display_names.get(gate_name, gate_name.upper())
-                    label = f"{gate_label} IF({val})"
-                    instruction.label = label
-                    logger.info(f"Processing conditional gate via condition attribute: {label}")
-                except Exception as e:
-                    logger.error(f"Error processing conditional gate: {e}")
+            # Get a mutable copy of the instruction if needed
+            if hasattr(instruction, 'to_mutable'):
+                mutable_instruction = instruction.to_mutable()
+            else:
+                mutable_instruction = instruction
+                
+            # Append the instruction to our new circuit
+            # We don't try to modify the instruction's properties directly anymore
+            circuit_to_draw.append(mutable_instruction, qargs, cargs)
 
         return circuit_to_draw
 
@@ -302,9 +239,14 @@ class CircuitVisualizer:
             fold_factor = max(1, n_gates // auto_fold if auto_fold > 0 else 1)
             height = max(height, 1 + 0.35 * total_rows * fold_factor)
 
-        # Create figure with adjusted size
+        # Create figure with adjusted size and transparency
         fig = plt.figure(figsize=(width, height), dpi=dpi)
         ax = fig.add_subplot(111)
+        
+        # Make the figure and axes transparent if requested
+        if transparent_bg:
+            fig.patch.set_facecolor('none')
+            ax.patch.set_facecolor('none')
 
         # Draw the circuit with proper styling
         try:
@@ -363,7 +305,7 @@ class CircuitVisualizer:
                 if isinstance(child, patches.Rectangle):
                     # Try to find the associated text element that contains "IF"
                     rect_x = child.get_x() + child.get_width()/2
-                    rect_y = child.get_y() + child.get_height()/2
+                    rect_y = child.get_y() + child.get_height()/2  
                     
                     for text_obj in ax.texts:
                         # Check if text object is close to this rectangle
@@ -382,8 +324,8 @@ class CircuitVisualizer:
                             
                             text_obj.set_path_effects([])
             
-            # Apply consistent figure styling
-            self._apply_figure_styling(fig, ax)
+            # Apply consistent figure styling with transparency
+            self._apply_figure_styling(fig, transparent=transparent_bg, ax=ax)
             
         except Exception as e:
             logger.error(f"Error drawing circuit: {e}")
@@ -398,7 +340,7 @@ class CircuitVisualizer:
         # Save with tight bounding box to remove excess margins
         buf = io.BytesIO()
         plt.savefig(buf, format='png', 
-                   transparent=transparent_bg, 
+                   transparent=transparent_bg,  # Apply transparency setting when saving 
                    dpi=dpi, 
                    bbox_inches='tight', 
                    pad_inches=0.02)  # Minimal padding
@@ -409,15 +351,23 @@ class CircuitVisualizer:
         return base64.b64encode(buf.getvalue()).decode('utf-8')
 
     def generate_statevector_visualization(self, statevector=None, plot_type='bloch', 
-                           title=None, figsize=(8, 6), dpi=150) -> str:
+                           title=None, figsize=(8, 6), dpi=150,
+                           transparent_bg=True) -> str:
         """Generate a visualization of a quantum state."""
         logger.info(f"Generating statevector visualization of type {plot_type}")
         fig = plt.figure(figsize=figsize)
+    
+        # Apply transparency to figure
+        if transparent_bg:
+            fig.patch.set_facecolor('none')
     
         try:
             # Instead of trying to process the statevector, just create an error image
             # This is a temporary solution until we can debug the issue properly
             ax = fig.add_subplot(111)
+            if transparent_bg:
+                ax.patch.set_facecolor('none')
+                
             ax.text(0.5, 0.5, 
                     "Statevector visualization is not available for this circuit type",
                     horizontalalignment='center', 
@@ -426,11 +376,13 @@ class CircuitVisualizer:
                     color='black',
                     wrap=True)
             ax.axis('off')
-            fig.patch.set_facecolor('white')
         
         except Exception as e:
             logger.error(f"Error generating state visualization: {e}")
             ax = fig.add_subplot(111)
+            if transparent_bg:
+                ax.patch.set_facecolor('none')
+                
             ax.text(0.5, 0.5, f"Error generating state visualization: {str(e)}",
                 horizontalalignment='center', verticalalignment='center',
                 fontsize=12, color='red')
@@ -438,16 +390,21 @@ class CircuitVisualizer:
     
         # Convert to base64 image
         buf = io.BytesIO()
-        plt.savefig(buf, format='png', dpi=dpi, bbox_inches='tight')
+        plt.savefig(buf, format='png', dpi=dpi, bbox_inches='tight', transparent=transparent_bg)
         plt.close(fig)
         buf.seek(0)
     
         # Return just the base64 encoded image as a string
         return base64.b64encode(buf.getvalue()).decode('utf-8')
     
-    def generate_measurement_histogram(self, counts=None, figsize=(8, 5), dpi=150, title=None) -> str:
+    def generate_measurement_histogram(self, counts=None, figsize=(8, 5), dpi=150, 
+                                       title=None, transparent_bg=True) -> str:
         """Generate a histogram visualization of measurement results."""
         fig = plt.figure(figsize=figsize)
+        
+        # Apply transparency to figure
+        if transparent_bg:
+            fig.patch.set_facecolor('none')
         
         try:
             # Handle case where a circuit is passed instead of counts
@@ -456,33 +413,82 @@ class CircuitVisualizer:
                 
             if isinstance(counts, QuantumCircuit):
                 # Simulate the circuit to get counts
-                from qiskit import Aer, execute
-                circuit = counts  # Rename for clarity
-                
-                # Check if circuit has measurements
-                has_measurements = any(instr.name == 'measure' for instr, _, _ in circuit.data)
-                
-                if not has_measurements:
-                    # Add measurements to all qubits if none exist
-                    measuring_circuit = circuit.copy()
-                    measuring_circuit.measure_all()
-                else:
-                    measuring_circuit = circuit
+                try:
+                    # Updated: use qiskit_aer and execute
+                    circuit = counts  # Rename for clarity
                     
-                # Run simulation
-                backend = Aer.get_backend('qasm_simulator')
-                job = execute(measuring_circuit, backend, shots=1024)
-                counts = job.result().get_counts()
+                    # Check if circuit has measurements
+                    has_measurements = any(instr.name == 'measure' for instr, _, _ in circuit.data)
+                    
+                    if not has_measurements:
+                        # Add measurements to all qubits if none exist
+                        measuring_circuit = circuit.copy()
+                        measuring_circuit.measure_all()
+                    else:
+                        measuring_circuit = circuit
+                        
+                    # Run simulation
+                    backend = AerSimulator()
+                    transpiled_circuit = transpile(measuring_circuit, backend)
+                    job = backend.run(transpiled_circuit, shots=1024)
+                    counts = job.result().get_counts()
+                except ImportError as e:
+                    # If qiskit_aer is not available, use a fallback
+                    logger.warning(f"Import error with qiskit_aer: {e}")
+                    ax = fig.add_subplot(111)
+                    if transparent_bg:
+                        ax.patch.set_facecolor('none')
+                        
+                    ax.text(0.5, 0.5, 
+                            "Simulation not available - qiskit-aer package required",
+                            horizontalalignment='center', 
+                            verticalalignment='center',
+                            fontsize=12, 
+                            color='black',
+                            wrap=True)
+                    ax.axis('off')
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png', dpi=dpi, bbox_inches='tight', transparent=transparent_bg)
+                    plt.close(fig)
+                    buf.seek(0)
+                    return base64.b64encode(buf.getvalue()).decode('utf-8')
+                except Exception as e:
+                    logger.error(f"Error simulating circuit: {e}")
+                    ax = fig.add_subplot(111)
+                    if transparent_bg:
+                        ax.patch.set_facecolor('none')
+                        
+                    ax.text(0.5, 0.5, 
+                            f"Error simulating circuit: {str(e)}",
+                            horizontalalignment='center', 
+                            verticalalignment='center',
+                            fontsize=12, 
+                            color='red',
+                            wrap=True)
+                    ax.axis('off')
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png', dpi=dpi, bbox_inches='tight', transparent=transparent_bg)
+                    plt.close(fig)
+                    buf.seek(0)
+                    return base64.b64encode(buf.getvalue()).decode('utf-8')
             
             logger.info(f"Generating measurement histogram with {len(counts)} outcomes")
-            plot_histogram(counts, title=title or 'Measurement Results')
+            # Generate the histogram plot
+            ax = plot_histogram(counts, title=title or 'Measurement Results')
             
-            # Apply consistent styling
-            self._apply_figure_styling(fig)
+            # Apply transparency to the axes
+            if transparent_bg and ax:
+                ax.patch.set_facecolor('none')
+            
+            # Apply consistent styling with transparency
+            self._apply_figure_styling(fig, transparent=transparent_bg)
             
         except Exception as e:
             logger.error(f"Error generating histogram: {e}")
             ax = fig.add_subplot(111)
+            if transparent_bg:
+                ax.patch.set_facecolor('none')
+                
             ax.text(0.5, 0.5, f"Error generating histogram: {str(e)}",
                   horizontalalignment='center', verticalalignment='center',
                   fontsize=12, color='red')
@@ -490,7 +496,7 @@ class CircuitVisualizer:
         
         # Convert to base64 image
         buf = io.BytesIO()
-        plt.savefig(buf, format='png', dpi=dpi, bbox_inches='tight')
+        plt.savefig(buf, format='png', dpi=dpi, bbox_inches='tight', transparent=transparent_bg)
         plt.close(fig)
         buf.seek(0)
         

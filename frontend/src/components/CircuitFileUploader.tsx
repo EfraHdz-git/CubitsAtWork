@@ -1,5 +1,6 @@
 // src/components/CircuitFileUploader.tsx
 import { useState, useEffect, useRef } from 'react';
+import { ApiService } from '../services/api';
 import '../assets/styles/components/CircuitFileUploader.css';
 
 interface Props {
@@ -9,9 +10,6 @@ interface Props {
   onGenerationFailed?: (errorMessage: string) => void;
   isGenerating?: boolean;
 }
-
-// Set API base URL
-const API_BASE_URL = 'http://localhost:8000';
 
 function CircuitFileUploader({ 
   onCircuitGenerated, 
@@ -83,46 +81,9 @@ function CircuitFileUploader({
     onStartGeneration();
     setError(null);
     
-    // Create a FormData object to send the file
-    const formData = new FormData();
-    formData.append('file', file);
-    
     try {
-      // Use the correct endpoint for file uploads
-      const endpoint = `${API_BASE_URL}/upload/circuit`;
-      
-      // Make the API call
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        // Try to get detailed error message from response
-        let errorMessage = 'Failed to process the circuit file';
-        try {
-          const errorData = await response.json();
-          if (errorData && errorData.detail) {
-            errorMessage = errorData.detail;
-          }
-        } catch (jsonError) {
-          // If JSON parsing fails, try to get text
-          try {
-            const errorText = await response.text();
-            if (errorText) {
-              errorMessage = errorText;
-            }
-          } catch (textError) {
-            // If both fail, use status code
-            errorMessage = `Server error: ${response.status}`;
-          }
-        }
-        
-        throw new Error(errorMessage);
-      }
-      
-      // Parse the JSON response
-      const circuitData = await response.json();
+      // Use the ApiService to upload the circuit file
+      const circuitData = await ApiService.uploadCircuitFile(file);
       
       // Update the parent with the new circuit
       onCircuitGenerated(circuitData);
